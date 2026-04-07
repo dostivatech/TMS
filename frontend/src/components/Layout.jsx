@@ -50,14 +50,13 @@ export default function Layout() {
         }}>
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <TreePine size={26} color="#4ade80" />
               <div>
-                <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, lineHeight: 1 }}>WoodTrack</div>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>Trading Management</div>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, lineHeight: 1 }}>TMS</div>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>Trading Management System</div>
               </div>
             </div>
           )}
-          {collapsed && <TreePine size={26} color="#4ade80" />}
+          {collapsed && <h2>TMS</h2>}
           <button
             onClick={() => setCollapsed(!collapsed)}
             style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: 4 }}
