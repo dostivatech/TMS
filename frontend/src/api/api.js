@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', 
+  baseURL: import.meta.env.VITE_API_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -40,7 +40,7 @@ export default api
 
 
 export const authAPI = {
-  login: (data) => axios.post('/api/auth/login/', data),
+  login: (data) => api.post('/auth/login/', data),
   register: (data) => api.post('/auth/register/', data),
   me: () => api.get('/auth/me/'),
 }
