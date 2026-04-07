@@ -7,7 +7,7 @@ const app = express()
 const PORT = process.env.PORT || 8000
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: ['https://tms-zeta-sepia.vercel.app/'], credentials: true }))
+app.use(cors({ origin: '*', credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
