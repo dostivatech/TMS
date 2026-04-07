@@ -33,9 +33,9 @@ const { sequelize, User } = require('./models')
 
 const start = async () => {
   try {
-    await sequelize.sync({ alter: false }) // Set to true to auto-update tables (use with caution in production)
+    await sequelize.sync({ alter: true }) // Set to true to auto-update tables (use with caution in production)
     console.log('✅ Database synced')
-
+    
     // Create default admin if no users exist
     const exists = await User.findOne({ where: { username: 'admin' } })
     if (!exists) {

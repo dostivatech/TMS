@@ -15,6 +15,7 @@ const User = sequelize.define('User', {
 
 // ── WoodProduct ───────────────────────────────────────────────────────────────
 const WoodProduct = sequelize.define('WoodProduct', {
+  userId: { type: DataTypes.INTEGER },
   id:           { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name:         { type: DataTypes.STRING, allowNull: false },
   species:      { type: DataTypes.STRING, defaultValue: '' },
@@ -27,6 +28,7 @@ const WoodProduct = sequelize.define('WoodProduct', {
 
 // ── Customer ──────────────────────────────────────────────────────────────────
 const Customer = sequelize.define('Customer', {
+  userId: { type: DataTypes.INTEGER },
   id:      { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name:    { type: DataTypes.STRING, allowNull: false },
   phone:   { type: DataTypes.STRING, defaultValue: '' },
@@ -38,6 +40,8 @@ const Customer = sequelize.define('Customer', {
 
 // ── Transaction ───────────────────────────────────────────────────────────────
 const Transaction = sequelize.define('Transaction', {
+  userId: { type: DataTypes.INTEGER },
+  customerId: { type: DataTypes.INTEGER },
   id:              { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   type:            { type: DataTypes.ENUM('buy','sell'), allowNull: false },
   productName:     { type: DataTypes.STRING, allowNull: false },
@@ -53,6 +57,8 @@ const Transaction = sequelize.define('Transaction', {
 
 // ── Invoice ───────────────────────────────────────────────────────────────────
 const Invoice = sequelize.define('Invoice', {
+  userId: { type: DataTypes.INTEGER },
+  customerId: { type: DataTypes.INTEGER },
   id:              { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   invoiceNumber:   { type: DataTypes.STRING, unique: true },
   customerName:    { type: DataTypes.STRING, allowNull: false },
@@ -74,6 +80,8 @@ const Invoice = sequelize.define('Invoice', {
 
 // ── Payment ───────────────────────────────────────────────────────────────────
 const Payment = sequelize.define('Payment', {
+  userId: { type: DataTypes.INTEGER },
+  invoiceId: { type: DataTypes.INTEGER },
   id:              { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   amount:          { type: DataTypes.DECIMAL(12, 2), allowNull: false },
   paymentMethod:   { type: DataTypes.ENUM('cash','bank_transfer','cheque','upi','other'), defaultValue: 'cash' },
