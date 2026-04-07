@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { TreePine, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
 
+
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -55,10 +56,9 @@ export default function Login() {
     <div style={s.page}>
       <div style={s.card}>
         <div style={s.logo}>
-          <TreePine size={36} color="#1a6b3a" />
           <div>
-            <h1 style={s.title}>WoodTrack</h1>
-            <p style={s.sub}>Wood Trading Management</p>
+            <h1 style={s.title}>TMS</h1>
+            <p style={s.sub}>Trading Management System</p>
           </div>
         </div>
 
