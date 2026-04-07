@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { Input, Button } from '../components/UI'
 import { COLORS } from '../theme'
 import { Ionicons } from '@expo/vector-icons'
+import icon from '../../assets/icon.png'
 
 export default function LoginScreen() {
   const { login } = useAuth()
@@ -48,10 +49,10 @@ export default function LoginScreen() {
           {/* Logo */}
           <View style={styles.logoSection}>
             <View style={styles.logoCircle}>
-              <Text style={styles.logoEmoji}>🌲</Text>
+              <icon style={styles.logoEmoji} />
             </View>
-            <Text style={styles.appName}>WoodTrack</Text>
-            <Text style={styles.appSub}>Wood Trading Management</Text>
+            <Text style={styles.appName}>TMS</Text>
+            <Text style={styles.appSub}>Trading Management System</Text>
           </View>
 
           {/* Form */}

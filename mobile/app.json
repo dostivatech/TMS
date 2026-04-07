@@ -1,33 +1,31 @@
 {
   "expo": {
-    "name": "WoodTrack",
-    "slug": "woodtrack-mobile",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1a6b3a"
+    "name": "TMS",
+    "slug": "tms-mobile",
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/7a30c16b-953c-4fe1-b475-ce29298a4313"
     },
-    "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.woodtrack.app"
+    "extra": {
+      "eas": {
+        "projectId": "7a30c16b-953c-4fe1-b475-ce29298a4313"
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1a6b3a"
-      },
-      "package": "com.woodtrack.app"
+      "package": "com.dostivatech.tmsmobile",
+      "runtimeVersion": "1.0.0"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-font"
-    ]
+    "owner": "dostivatech",
+    "ios": {
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
+    }
+  },
+  "updates": {
+    "url": "https://u.expo.dev/7a30c16b-953c-4fe1-b475-ce29298a4313"
+  },
+  "runtimeVersion": {
+    "policy": "appVersion"
   }
 }
