@@ -7,7 +7,7 @@ const app = express()
 const PORT = process.env.PORT || 8000
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: '*', credentials: true }))
+app.use(cors({ origin: ['https://tms-zeta-sepia.vercel.app/'], credentials: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -37,8 +37,8 @@ const start = async () => {
     console.log('✅ Database synced')
 
     // Create default admin if no users exist
-    const count = await User.count()
-    if (count === 0) {
+    const exists = await User.findOne({ where: { username: 'admin' } })
+    if (!exists) {
       const hashed = await bcrypt.hash('admin123', 10)
       await User.create({
         username: 'admin',

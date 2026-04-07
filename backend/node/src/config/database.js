@@ -1,11 +1,18 @@
 const { Sequelize } = require('sequelize')
-const path = require('path')
 require('dotenv').config()
 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.resolve(process.env.DB_PATH || './woodtrack.db'),
+const { Sequelize } = require('sequelize')
+
+const sequelize = new Sequelize(process.env.DB_URL, {
+  dialect: 'postgres',
+  protocol: 'postgres',
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
 })
 
 module.exports = sequelize
