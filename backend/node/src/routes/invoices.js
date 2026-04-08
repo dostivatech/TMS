@@ -266,4 +266,60 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
+const PDFDocument = require('pdfkit')
+
+// GET /api/invoices/:id/pdf
+router.get('/:id/pdf', auth, async (req, res) => {
+  try {
+    const inv = await Invoice.findOne({
+      where: { id: req.params.id, ...scope(req) },
+      include: [{ model: Payment, as: 'payments' }],
+    })
+
+    if (!inv) return res.status(404).json({ error: 'Invoice not found' })
+
+    const invoice = formatInvoice(inv)
+
+    const doc = new PDFDocument({ margin: 40 })
+
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename=invoice_${invoice.invoice_number}.pdf`
+    )
+
+    doc.pipe(res)
+
+    //  HEADER
+    doc.fontSize(20).text('WoodTrak Invoice', { align: 'center' })
+    doc.moveDown()
+
+    doc.fontSize(12).text(`Invoice: ${invoice.invoice_number}`)
+    doc.text(`Date: ${invoice.issue_date}`)
+    doc.moveDown()
+
+    //  CUSTOMER
+    doc.text(`Customer: ${invoice.customer_name}`)
+    doc.text(`Phone: ${invoice.customer_phone}`)
+    doc.text(`Address: ${invoice.customer_address || '-'}`)
+    doc.moveDown()
+
+    //  SUMMARY
+    doc.text(`Subtotal: ₹${invoice.subtotal}`)
+    doc.text(`Tax (${invoice.tax_rate}%): ₹${invoice.tax_amount}`)
+    doc.text(`Discount: ₹${invoice.discount}`)
+    doc.moveDown()
+
+    doc.fontSize(14).text(`Total: ₹${invoice.total_amount}`)
+    doc.text(`Paid: ₹${invoice.amount_paid}`)
+    doc.text(`Balance: ₹${invoice.balance_due}`)
+
+    doc.end()
+
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'PDF generation failed' })
+  }
+})
+
 module.exports = router
