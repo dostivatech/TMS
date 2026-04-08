@@ -55,6 +55,7 @@ export const userAPI = {
 }
 
 
+
 export const dashboardAPI = {
   get: () => api.get('/dashboard/'),
 }
@@ -75,7 +76,7 @@ export const invoiceAPI = {
   create: (data) => api.post('/invoices/', data),
   update: (id, data) => api.put(`/invoices/${id}/`, data),
   delete: (id) => api.delete(`/invoices/${id}/`),
-  pdf: (id) => api.get(`/invoices/${id}/pdf/`, { responseType: 'blob' }),
+  pdf: (id) => api.get(`/invoices/${id}/pdf`, { responseType: 'blob' }),
   markSent: (id) => api.post(`/invoices/${id}/mark_sent/`),
   cancel: (id) => api.post(`/invoices/${id}/cancel/`),
   overdue: () => api.get('/invoices/overdue/'),

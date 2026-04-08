@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { customerAPI } from '../api/api'
 import { Plus, Search, Edit2, Trash2, X, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useNavigate } from "react-router-dom";
 
 const EMPTY = { name: '', phone: '', email: '', address: '', gstin: '', notes: '' }
 
@@ -46,6 +47,12 @@ export default function Customers() {
     load()
   }
 
+const navigate = useNavigate();
+
+const handleClick = (customer) => {
+  navigate(`/customers/${customer.id}`);
+};
+
   return (
     <div style={{ padding: 28 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
@@ -80,7 +87,8 @@ export default function Customers() {
               onMouseLeave={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: `hsl(${c.name.charCodeAt(0) * 7}, 50%, 45%)`, color: '#fff', fontSize: 16, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: `hsl(${c.name.charCodeAt(0) * 7}, 50%, 45%)`, color: '#fff', fontSize: 16, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                          onClick={() => handleClick(c)}>
                     {c.name[0].toUpperCase()}
                   </div>
                   <div>

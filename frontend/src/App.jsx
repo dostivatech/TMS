@@ -11,6 +11,7 @@ import Reminders from './pages/Reminders'
 import Customers from './pages/Customers'
 import Products from './pages/Products'
 import AddUser from './pages/AddUser'
+import CustomerDetails from './pages/CustomerDetail'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="customers" element={<Customers />} />
         <Route path="products" element={<Products />} />
         <Route path="users" element={<AddUser />} />
+        <Route path="/customers/:id" element={<CustomerDetails />} />
       </Route>
     </Routes>
   )

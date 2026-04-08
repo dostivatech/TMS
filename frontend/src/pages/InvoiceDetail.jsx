@@ -70,6 +70,24 @@ export default function InvoiceDetail() {
     }
   }
 
+  const handlePrint = async () => {
+  try {
+    const { data } = await invoiceAPI.pdf(id)
+
+    const blob = new Blob([data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+
+    const printWindow = window.open(url)
+
+    printWindow.onload = () => {
+      printWindow.focus()
+      printWindow.print()
+    }
+  } catch {
+    toast.error('Print failed')
+  }
+}
+
   const handleDeletePayment = async (pid) => {
     if (!confirm('Delete this payment?')) return
     await paymentAPI.delete(pid)
@@ -110,6 +128,7 @@ export default function InvoiceDetail() {
           {/* Actions */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button onClick={handlePDF} style={btnStyle('#fff', '#1a6b3a', true)}><FileDown size={14} /> PDF</button>
+            <button onClick={handlePrint} style={btnStyle('#fff', '#000', true)}> 🖨️ Print</button>
             {invoice.status === 'draft' && (
               <button onClick={handleMarkSent} style={btnStyle('#1565c0', '#fff')}><Send size={14} /> Mark Sent</button>
             )}
