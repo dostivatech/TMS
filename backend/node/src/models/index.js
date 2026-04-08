@@ -78,6 +78,10 @@ const Invoice = sequelize.define('Invoice', {
   issueDate:       { type: DataTypes.DATEONLY, defaultValue: DataTypes.NOW },
   dueDate:         { type: DataTypes.DATEONLY, allowNull: false },
   notes:           { type: DataTypes.TEXT, defaultValue: '' },
+  reminderSent: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false,
+},
 })
 
 // ── Payment ───────────────────────────────────────────────────────────────────

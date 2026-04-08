@@ -93,6 +93,11 @@ router.post('/', auth, async (req, res) => {
     // Sync invoice balance and status
     await syncInvoice(invoiceId)
 
+    await Invoice.update(
+   { reminderSent: false },
+   { where: { id: invoiceId } }
+    )
+
     // Return payment with display fields
     res.status(201).json({
       ...payment.toJSON(),
@@ -115,11 +120,17 @@ router.delete('/:id', auth, async (req, res) => {
     const invoiceId = payment.invoiceId
     await payment.destroy()
     await syncInvoice(invoiceId)
-
+    
+    await Invoice.update(
+  { reminderSent: false },
+  { where: { id: invoiceId } }
+    )
     res.status(204).send()
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
 })
+
+
 
 module.exports = router
