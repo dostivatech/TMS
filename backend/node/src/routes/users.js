@@ -26,7 +26,7 @@ router.get('/', auth, adminOnly, async (req, res) => {
 // POST create user (admin only)
 router.post('/', auth, adminOnly, async (req, res) => {
   try {
-    const { username, password, email, firstName, lastName, isAdmin , phone} = req.body
+    const { username, password, email, firstName, lastName, isAdmin , phone, upiId} = req.body
 
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password required' })
@@ -44,11 +44,12 @@ router.post('/', auth, adminOnly, async (req, res) => {
       phone: phone || '',
       isAdmin: isAdmin || false,
       isActive: true,
+      upiId: upiId || '',
     })
 
     res.status(201).json({
       id: user.id, username: user.username,
-      email: user.email, isAdmin: user.isAdmin
+      email: user.email, isAdmin: user.isAdmin, upiId: user.upiId 
     })
   } catch (err) {
     res.status(400).json({ error: err.message })

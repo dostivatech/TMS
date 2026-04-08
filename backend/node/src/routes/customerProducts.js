@@ -106,7 +106,6 @@ prodRouter.post('/', auth, async (req, res) => {
     const body = req.body
 
     const name         = body.name
-    const species      = body.species || ''
     const unit         = body.unit || 'cft'
     const pricePerUnit = body.pricePerUnit || body.price_per_unit
     const stockQty     = body.stockQty !== undefined ? body.stockQty
@@ -137,7 +136,6 @@ prodRouter.put('/:id', auth, async (req, res) => {
     const body = req.body
     const updates = {
       name:         body.name         !== undefined ? body.name         : p.name,
-      species:      body.species      !== undefined ? body.species      : p.species,
       unit:         body.unit         !== undefined ? body.unit         : p.unit,
       pricePerUnit: body.pricePerUnit || body.price_per_unit            || p.pricePerUnit,
       stockQty:     body.stockQty     !== undefined ? body.stockQty

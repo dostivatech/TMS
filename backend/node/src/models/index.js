@@ -11,6 +11,8 @@ const User = sequelize.define('User', {
   password:  { type: DataTypes.STRING, allowNull: false },
   isAdmin:   { type: DataTypes.BOOLEAN, defaultValue: false },
   isActive:  { type: DataTypes.BOOLEAN, defaultValue: true },
+  upiId:       { type: DataTypes.STRING, defaultValue: '' },
+
 })
 
 // ── WoodProduct ───────────────────────────────────────────────────────────────
@@ -18,7 +20,6 @@ const WoodProduct = sequelize.define('WoodProduct', {
   userId: { type: DataTypes.INTEGER },
   id:           { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name:         { type: DataTypes.STRING, allowNull: false },
-  species:      { type: DataTypes.STRING, defaultValue: '' },
   unit:         { type: DataTypes.ENUM('cft','ton','piece','sqft','kg'), defaultValue: 'cft' },
   pricePerUnit: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   stockQty:     { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
@@ -36,6 +37,7 @@ const Customer = sequelize.define('Customer', {
   address: { type: DataTypes.TEXT, defaultValue: '' },
   gstin:   { type: DataTypes.STRING, defaultValue: '' },
   notes:   { type: DataTypes.TEXT, defaultValue: '' },
+  customer_upi :    { type: DataTypes.STRING, defaultValue: '' },
 })
 
 // ── Transaction ───────────────────────────────────────────────────────────────
