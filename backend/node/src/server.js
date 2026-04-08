@@ -7,7 +7,7 @@ const app = express()
 const PORT = process.env.PORT || 8000
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({ origin: '*', credentials: true }))
+app.use(cors({ origin: '*'}))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -52,7 +52,7 @@ const start = async () => {
       console.log('   Username: admin')
       console.log('   Password: admin123')
     }
-
+    console.log("Models loaded:", Object.keys(require('./models')))
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`\n🚀 WoodTrack API running on http://0.0.0.0:${PORT}`)
       console.log(`📱 Mobile URL: http://YOUR_IP:${PORT}/api`)
