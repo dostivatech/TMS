@@ -58,6 +58,7 @@ export const userAPI = {
 
 export const dashboardAPI = {
   get: () => api.get('/dashboard/'),
+  analytics: (params) => api.get('/dashboard/analytics', { params }),
 }
 
 export const transactionAPI = {

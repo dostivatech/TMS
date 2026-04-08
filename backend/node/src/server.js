@@ -1,5 +1,6 @@
 require('dotenv').config()
 require('./services/reminderService')
+app.use('/api/dashboard', dashboardRoutes)
 const express = require('express')
 const cors = require('cors')
 const bcrypt = require('bcryptjs')

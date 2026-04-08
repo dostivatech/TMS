@@ -2,6 +2,9 @@ const router = require('express').Router()
 const { Op } = require('sequelize')
 const { Transaction, Invoice, Customer, Payment } = require('../models')
 const auth = require('../middleware/auth')
+const { Op } = require('sequelize')
+const { Invoice } = require('../models')
+const auth = require('../middleware/auth')
 
 router.get('/', auth, async (req, res) => {
   try {
@@ -98,17 +101,27 @@ router.get('/', auth, async (req, res) => {
 
 router.get('/analytics', auth, async (req, res) => {
   try {
-    const { from, to } = req.query
+    let { from, to } = req.query
 
-    const where = {
-      issueDate: {
-        [Op.between]: [from, to]
-      }
+    // 🔥 Default dates if empty
+    if (!from || !to) {
+      const today = new Date()
+      const past = new Date()
+      past.setDate(today.getDate() - 7)
+
+      from = past.toISOString().split('T')[0]
+      to = today.toISOString().split('T')[0]
     }
 
-    const invoices = await Invoice.findAll({ where })
+    const invoices = await Invoice.findAll({
+      where: {
+        issueDate: {
+          [Op.between]: [from, to]
+        }
+      }
+    })
 
-    let summary = {
+    const summary = {
       sales: 0,
       purchases: 0,
       received: 0,
@@ -122,28 +135,32 @@ router.get('/analytics', auth, async (req, res) => {
       const date = inv.issueDate
 
       if (!daily[date]) {
-        daily[date] = { sales: 0, purchases: 0 }
+        daily[date] = { sales: 0, purchases: 0, received: 0, paid: 0 }
       }
 
       if (inv.type === 'sale') {
         summary.sales += inv.totalAmount
         summary.received += inv.amountPaid
         daily[date].sales += inv.totalAmount
+        daily[date].received += inv.amountPaid
       } else {
         summary.purchases += inv.totalAmount
         summary.paid += inv.amountPaid
         daily[date].purchases += inv.totalAmount
+        daily[date].paid += inv.amountPaid
       }
 
       summary.pending += inv.balanceDue
     })
 
-    res.json({
-      summary,
-      daily
-    })
+    // 🔥 SaaS metrics
+    summary.profit = summary.sales - summary.purchases
+    summary.cashflow = summary.received - summary.paid
+
+    res.json({ summary, daily })
 
   } catch (err) {
+    console.error(err)
     res.status(500).json({ error: err.message })
   }
 })
