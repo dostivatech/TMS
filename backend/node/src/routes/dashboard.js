@@ -96,4 +96,55 @@ router.get('/', auth, async (req, res) => {
   }
 })
 
+router.get('/analytics', auth, async (req, res) => {
+  try {
+    const { from, to } = req.query
+
+    const where = {
+      issueDate: {
+        [Op.between]: [from, to]
+      }
+    }
+
+    const invoices = await Invoice.findAll({ where })
+
+    let summary = {
+      sales: 0,
+      purchases: 0,
+      received: 0,
+      paid: 0,
+      pending: 0
+    }
+
+    const daily = {}
+
+    invoices.forEach(inv => {
+      const date = inv.issueDate
+
+      if (!daily[date]) {
+        daily[date] = { sales: 0, purchases: 0 }
+      }
+
+      if (inv.type === 'sale') {
+        summary.sales += inv.totalAmount
+        summary.received += inv.amountPaid
+        daily[date].sales += inv.totalAmount
+      } else {
+        summary.purchases += inv.totalAmount
+        summary.paid += inv.amountPaid
+        daily[date].purchases += inv.totalAmount
+      }
+
+      summary.pending += inv.balanceDue
+    })
+
+    res.json({
+      summary,
+      daily
+    })
+
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
 module.exports = router
