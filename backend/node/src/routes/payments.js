@@ -123,7 +123,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     await Invoice.update(
   { reminderSent: false },
-  { where: { id: invoiceId } }
+  { where: { id: invoiceId } } 
     )
     res.status(204).send()
   } catch (err) {
