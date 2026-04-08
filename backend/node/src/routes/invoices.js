@@ -2,7 +2,8 @@ const router = require('express').Router()
 const { Op } = require('sequelize')
 const { Invoice, Payment } = require('../models')
 const auth = require('../middleware/auth')
-
+const PDFDocument = require('pdfkit')
+const QRCode = require('qrcode')
 const scope = (req) => req.user.isAdmin ? {} : { userId: req.user.id }
 
 const calcInvoice = (data) => {
@@ -266,9 +267,11 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
-const PDFDocument = require('pdfkit')
+
 
 // GET /api/invoices/:id/pdf
+
+
 router.get('/:id/pdf', auth, async (req, res) => {
   try {
     const inv = await Invoice.findOne({
@@ -290,29 +293,102 @@ router.get('/:id/pdf', auth, async (req, res) => {
 
     doc.pipe(res)
 
-    //  HEADER
-    doc.fontSize(20).text('WoodTrak Invoice', { align: 'center' })
+    // 🔥 COMPANY HEADER
+    doc.fontSize(20).text('WOODTRAK', { continued: true })
+    doc.fontSize(10).text('  |  Wood Management System')
+
+    doc.fontSize(9).text('Hyderabad, India')
+    doc.text('GSTIN: 22AAAAA0000A1Z5')
+
+    // 🔥 INVOICE META (RIGHT)
+    doc.fontSize(14).text('INVOICE', 400, 40, { align: 'right' })
+    doc.fontSize(10)
+      .text(`Invoice #: ${invoice.invoice_number}`, { align: 'right' })
+      .text(`Date: ${invoice.issue_date}`, { align: 'right' })
+      .text(`Due: ${invoice.due_date}`, { align: 'right' })
+      .text(`Status: ${invoice.status_display}`, { align: 'right' })
+
+    doc.moveDown(2)
+
+    // 👤 BILL TO
+    doc.fontSize(11).text('Bill To:')
+    doc.fontSize(10).text(invoice.customer_name)
+    doc.text(invoice.customer_phone || '')
+    doc.text(invoice.customer_address || '')
+
     doc.moveDown()
 
-    doc.fontSize(12).text(`Invoice: ${invoice.invoice_number}`)
-    doc.text(`Date: ${invoice.issue_date}`)
-    doc.moveDown()
+    // 📦 TABLE HEADER
+    const tableTop = doc.y
+    doc.rect(40, tableTop, 520, 20).fill('#f5f5f5')
 
-    //  CUSTOMER
-    doc.text(`Customer: ${invoice.customer_name}`)
-    doc.text(`Phone: ${invoice.customer_phone}`)
-    doc.text(`Address: ${invoice.customer_address || '-'}`)
-    doc.moveDown()
+    doc.fillColor('#000')
+      .fontSize(10)
+      .text('Description', 45, tableTop + 5)
+      .text('Qty', 300, tableTop + 5, { width: 50, align: 'right' })
+      .text('Rate', 350, tableTop + 5, { width: 80, align: 'right' })
+      .text('Amount', 430, tableTop + 5, { width: 100, align: 'right' })
 
-    //  SUMMARY
-    doc.text(`Subtotal: ₹${invoice.subtotal}`)
-    doc.text(`Tax (${invoice.tax_rate}%): ₹${invoice.tax_amount}`)
-    doc.text(`Discount: ₹${invoice.discount}`)
-    doc.moveDown()
+    let y = tableTop + 25
 
-    doc.fontSize(14).text(`Total: ₹${invoice.total_amount}`)
-    doc.text(`Paid: ₹${invoice.amount_paid}`)
-    doc.text(`Balance: ₹${invoice.balance_due}`)
+    // 📦 ITEMS
+    if (invoice.items && invoice.items.length > 0) {
+      invoice.items.forEach(item => {
+        const amount = item.quantity * item.unit_price
+
+        doc.text(item.description, 45, y)
+        doc.text(item.quantity, 300, y, { width: 50, align: 'right' })
+        doc.text(`₹${item.unit_price}`, 350, y, { width: 80, align: 'right' })
+        doc.text(`₹${amount}`, 430, y, { width: 100, align: 'right' })
+
+        y += 20
+
+        // row line
+        doc.moveTo(40, y).lineTo(560, y).strokeColor('#eee').stroke()
+      })
+    }
+
+    doc.moveDown(2)
+
+    // 💰 TOTAL BOX
+    const summaryX = 350
+    let summaryY = doc.y
+
+    doc.fontSize(10)
+      .text(`Subtotal: ₹${invoice.subtotal}`, summaryX, summaryY)
+      .text(`Tax (${invoice.tax_rate}%): ₹${invoice.tax_amount}`, summaryX, summaryY + 15)
+      .text(`Discount: ₹${invoice.discount}`, summaryX, summaryY + 30)
+
+    doc.fontSize(14)
+      .text(`Total: ₹${invoice.total_amount}`, summaryX, summaryY + 55)
+
+    doc.fontSize(10)
+      .text(`Paid: ₹${invoice.amount_paid}`, summaryX, summaryY + 75)
+      .text(`Balance: ₹${invoice.balance_due}`, summaryX, summaryY + 90)
+
+    //  QR CODE (UPI)
+   let upiId
+
+   if (invoice.type === 'sale') {
+    upiId = 'yourbusiness@upi'        // YOU receive
+   } else {
+    upiId = invoice.customer_upi     // YOU pay
+   }
+
+   const upiLink = `upi://pay?pa=${upiId}&pn=WoodTrak&am=${invoice.balance_due}&tn=Invoice-${invoice.invoice_number}`
+
+    const qrImage = await QRCode.toDataURL(upiLink)
+    doc.image(qrImage, 40, summaryY, { width: 100 })
+
+    doc.fontSize(8).text('Scan to Pay (UPI)', 40, summaryY + 110)
+
+    doc.moveDown(4)
+
+    //  FOOTER
+    doc.fontSize(10).text('Thank you for your business!', { align: 'center' })
+
+    doc.moveDown()
+    doc.text('Authorized Signature', { align: 'right' })
 
     doc.end()
 
