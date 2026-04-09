@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const { Op } = require('sequelize')
 const { Transaction, Invoice, Customer } = require('../models')
-const { Invoice } = require('../models')
 const auth = require('../middleware/auth')
 
 router.get('/', auth, async (req, res) => {
