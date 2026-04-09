@@ -1,7 +1,7 @@
 require('dotenv').config()
 require('./services/reminderService')
 
-const dashboardRoutes = require('./routes/dashboardRoutes')
+const dashboardRoutes = require('./routes/dashboard')
 const express = require('express')
 const cors = require('cors')
 const bcrypt = require('bcryptjs')
