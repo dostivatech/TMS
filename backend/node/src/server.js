@@ -1,10 +1,11 @@
 require('dotenv').config()
 require('./services/reminderService')
-app.use('/api/dashboard', dashboardRoutes)
+
+const dashboardRoutes = require('./routes/dashboardRoutes')
 const express = require('express')
 const cors = require('cors')
 const bcrypt = require('bcryptjs')
-
+const { custRouter, prodRouter } = require('./routes/customerProducts')
 const app = express()
 const PORT = process.env.PORT || 8000
 
@@ -20,8 +21,7 @@ app.use('/api/invoices',     require('./routes/invoices'))
 app.use('/api/payments',     require('./routes/payments'))
 app.use('/api/dashboard',    require('./routes/dashboard'))
 app.use('/api/users', require('./routes/users'))
-
-const { custRouter, prodRouter } = require('./routes/customerProducts')
+app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/customers', custRouter)
 app.use('/api/products',  prodRouter)
 
