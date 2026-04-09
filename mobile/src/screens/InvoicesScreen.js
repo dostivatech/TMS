@@ -8,6 +8,7 @@ import { invoiceAPI, fmt } from '../api/api'
 import { Badge, Card, EmptyState, LoadingScreen } from '../components/UI'
 import { COLORS, STATUS_COLORS } from '../theme'
 import { Ionicons } from '@expo/vector-icons'
+import ModalHeader from '../components/ModalHeader'
 
 const STATUS_TABS = [
   { value: '', label: 'All' },
@@ -25,7 +26,23 @@ export default function InvoicesScreen() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const navigation = useNavigation()
+  const [modal, setModal] = useState(false)
 
+const EMPTY_FORM = {
+  customer: null,
+  customer_name: '',
+  customer_phone: '',
+  customer_address: '',
+  issue_date: new Date().toISOString().split('T')[0],
+  due_date: '',
+  tax_rate: '0',
+  discount: '0',
+  notes: '',
+  items: [{ description: '', quantity: 1, unit_price: '' }]
+}
+
+
+const [form, setForm] = useState(EMPTY_FORM)
   const load = useCallback(async () => {
     try {
       const params = {}
@@ -126,9 +143,143 @@ export default function InvoicesScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load() }} colors={[COLORS.primary]} />}
         ListEmptyComponent={<EmptyState icon="🧾" title="No invoices found" subtitle="Invoices will appear here" />}
       />
+      <Modal visible={modal} animationType="slide">
+          <TouchableOpacity onPress={() => setModal(false)}>
+               <ModalHeader
+                 title="Create Invoice"
+                onClose={() => setModal(false)}
+                        />
+          </TouchableOpacity>
+
+        <ScrollView style={{ padding: 16 }}>
+
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 10 }}>
+            Create Invoice
+            </Text>
+
+          {/*  Customer (reuse UI) */}
+        <TouchableOpacity
+         style={{ backgroundColor: '#fff', padding: 12, borderRadius: 10 }}
+         onPress={() =>
+         navigation.navigate('Customers', {
+          selectMode: true,
+          onSelect: (c) => {
+            setForm(f => ({
+              ...f,
+              customer: c.id,
+              customer_name: c.name,
+              customer_phone: c.phone,
+              customer_address: c.address
+            }))
+            setModal(false)
+          }
+        })
+      }
+    >
+      <Text>{form.customer_name || 'Select Customer'}</Text>
+    </TouchableOpacity>
+
+    {/* Due Date */}
+    <TextInput
+      placeholder="Due Date"
+      value={form.due_date}
+      onChangeText={(v) => setForm(f => ({ ...f, due_date: v }))}
+      style={styles.searchBar}
+    />
+
+    {/* ITEMS */}
+    {form.items.map((item, i) => (
+      <View key={i} style={{ marginTop: 10 }}>
+        <TextInput
+          placeholder="Item"
+          value={item.description}
+          onChangeText={(v) => {
+            const items = [...form.items]
+            items[i].description = v
+            setForm({ ...form, items })
+          }}
+          style={styles.searchBar}
+        />
+
+        <TextInput
+          placeholder="Qty"
+          value={String(item.quantity)}
+          onChangeText={(v) => {
+            const items = [...form.items]
+            items[i].quantity = Number(v)
+            setForm({ ...form, items })
+          }}
+          style={styles.searchBar}
+        />
+
+        <TextInput
+          placeholder="Price"
+          value={String(item.unit_price)}
+          onChangeText={(v) => {
+            const items = [...form.items]
+            items[i].unit_price = Number(v)
+            setForm({ ...form, items })
+          }}
+          style={styles.searchBar}
+        />
+      </View>
+    ))}
+
+    {/* ADD ITEM */}
+     <TouchableOpacity onPress={() =>
+      setForm(f => ({
+        ...f,
+        items: [...f.items, { description: '', quantity: 1, unit_price: '' }]
+       }))
+      }>
+      <Text style={{ color: COLORS.primary }}>+ Add Item</Text>
+     </TouchableOpacity>
+
+     {/* TOTAL */}
+      <Text style={{ marginTop: 10 }}>
+       Total: ₹{form.items.reduce((s, it) => s + it.quantity * it.unit_price, 0)}
+      </Text>
+
+      {/* SAVE */}
+      <TouchableOpacity
+       style={{
+        backgroundColor: COLORS.primary,
+        padding: 14,
+        borderRadius: 10,
+        marginTop: 20
+        }}
+        onPress={async () => {
+        await invoiceAPI.create(form)
+        setModal(false)
+        load()
+        }}
+        >
+        <Text style={{ color: '#fff', textAlign: 'center' }}>
+        Create Invoice
+        </Text>
+        </TouchableOpacity>
+
+        </ScrollView>
+      </Modal>
+      <TouchableOpacity
+  style={{
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: COLORS.primary,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }}
+  onPress={() => setModal(true)}
+>
+  <Ionicons name="add" size={24} color="#fff" />
+</TouchableOpacity>
     </View>
   )
-}
+} 
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },

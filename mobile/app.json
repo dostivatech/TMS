@@ -2,30 +2,34 @@
   "expo": {
     "name": "TMS",
     "slug": "tms-mobile",
+
+    "scheme": "tms", 
+
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/7a30c16b-953c-4fe1-b475-ce29298a4313"
     },
+
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+
     "extra": {
       "eas": {
         "projectId": "7a30c16b-953c-4fe1-b475-ce29298a4313"
       }
     },
+
     "android": {
-      "package": "com.dostivatech.tmsmobile",
-      "runtimeVersion": "1.0.0"
+      "package": "com.dostivatech.tmsmobile"
     },
-    "owner": "dostivatech",
+
     "ios": {
       "runtimeVersion": {
         "policy": "appVersion"
       }
-    }
-  },
-  "updates": {
-    "url": "https://u.expo.dev/7a30c16b-953c-4fe1-b475-ce29298a4313"
-  },
-  "runtimeVersion": {
-    "policy": "appVersion"
+    },
+
+    "owner": "dostivatech"
   }
 }

@@ -68,9 +68,28 @@ export const invoiceAPI = {
   list: (params) => api.get('/invoices/', { params }),
   get: (id) => api.get(`/invoices/${id}/`),
   create: (data) => api.post('/invoices/', data),
+
+  //  ADD THESE
+  update: (id, data) => api.put(`/invoices/${id}/`, data),
+  delete: (id) => api.delete(`/invoices/${id}/`),
+
   markSent: (id) => api.post(`/invoices/${id}/mark_sent/`),
   cancel: (id) => api.post(`/invoices/${id}/cancel/`),
+
   reminders: (days) => api.get('/invoices/reminders/', { params: { days } }),
+
+  //  FIX THIS (IMPORTANT)
+  pdf: (id) =>
+    api.get(`/invoices/${id}/pdf/`, {
+      responseType: 'arraybuffer',
+    }),
+
+  //  OPTIONAL (export)
+  export: (params) =>
+    api.get('/invoices/export/', {
+      params,
+      responseType: 'arraybuffer',
+    }),
 }
 
 // ── Payments ──────────────────────────────────────────────────────────────────

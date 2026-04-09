@@ -8,7 +8,7 @@ import { Button, Input, Badge, EmptyState, LoadingScreen } from '../components/U
 import { COLORS } from '../theme'
 import { Ionicons } from '@expo/vector-icons'
 
-const EMPTY = { name: '', species: '', unit: 'cft', price_per_unit: '', stock_quantity: '0', description: '', is_active: true }
+const EMPTY = { name: '', unit: 'cft', price_per_unit: '', stock_quantity: '0', description: '', is_active: true }
 const UNITS = ['cft', 'ton', 'piece', 'sqft', 'kg']
 
 export default function ProductsScreen() {
@@ -69,7 +69,6 @@ export default function ProductsScreen() {
             color={p.is_active ? COLORS.primaryLight : '#999'}
           />
         </View>
-        {p.species ? <Text style={styles.prodSpecies}>{p.species}</Text> : null}
         <View style={styles.prodDetails}>
           <View style={styles.prodDetailItem}>
             <Text style={styles.detailLabel}>Price</Text>
@@ -129,8 +128,6 @@ export default function ProductsScreen() {
         </View>
         <ScrollView style={styles.modalBody} keyboardShouldPersistTaps="handled">
           <Input label="Product Name *" value={form.name} onChangeText={v => setForm(f => ({ ...f, name: v }))} placeholder="e.g. Teak Wood" />
-          <Input label="Species" value={form.species} onChangeText={v => setForm(f => ({ ...f, species: v }))} placeholder="e.g. Burma Teak" />
-
           <Text style={styles.fieldLabel}>Unit</Text>
           <View style={styles.unitRow}>
             {UNITS.map(u => (

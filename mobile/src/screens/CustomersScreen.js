@@ -7,6 +7,7 @@ import { customerAPI, fmt } from '../api/api'
 import { Button, Input, EmptyState, LoadingScreen } from '../components/UI'
 import { COLORS } from '../theme'
 import { Ionicons } from '@expo/vector-icons'
+import ModalHeader from '../components/ModalHeader'
 
 const EMPTY = { name: '', phone: '', email: '', address: '', gstin: '', notes: '' }
 
@@ -119,7 +120,10 @@ export default function CustomersScreen() {
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>{editing ? 'Edit Customer' : 'New Customer'}</Text>
           <TouchableOpacity onPress={() => setModal(false)}>
-            <Ionicons name="close" size={24} color={COLORS.text} />
+                <ModalHeader
+                 title="Create Invoice"
+                onClose={() => setModal(false)}
+                />
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.modalBody} keyboardShouldPersistTaps="handled">

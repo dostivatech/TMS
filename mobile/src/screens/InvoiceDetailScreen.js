@@ -7,6 +7,10 @@ import { invoiceAPI, paymentAPI, fmt } from '../api/api'
 import { Button, Input, Badge, LoadingScreen } from '../components/UI'
 import { COLORS, STATUS_COLORS } from '../theme'
 import { Ionicons } from '@expo/vector-icons'
+import * as FileSystem from 'expo-file-system'
+import * as Sharing from 'expo-sharing'
+import { Linking } from 'react-native'
+import { Buffer } from 'buffer'
 
 const METHODS = ['cash', 'bank_transfer', 'cheque', 'upi', 'other']
 const METHOD_ICONS = { cash: '💵', bank_transfer: '🏦', cheque: '📝', upi: '📱', other: '💳' }
@@ -66,6 +70,30 @@ export default function InvoiceDetailScreen({ route }) {
     ])
   }
 
+
+const handlePDF = async (id) => {
+  const res = await invoiceAPI.pdf(id)
+
+  const base64 = Buffer.from(res.data, 'binary').toString('base64')
+
+  const fileUri = FileSystem.documentDirectory + `invoice_${id}.pdf`
+
+  await FileSystem.writeAsStringAsync(fileUri, base64, {
+    encoding: FileSystem.EncodingType.Base64,
+  })
+
+  await Sharing.shareAsync(fileUri)
+}
+
+const handleShare = (inv) => {
+  const msg = `Invoice ${inv.invoice_number}
+Amount: ${fmt(inv.total_amount)}
+Due: ${inv.due_date}`
+
+  const url = `https://wa.me/${inv.customer_phone}?text=${encodeURIComponent(msg)}`
+  Linking.openURL(url)
+}
+
   if (loading) return <LoadingScreen />
   if (!invoice) return <View style={{ flex: 1 }}><Text>Not found</Text></View>
 
@@ -124,6 +152,17 @@ export default function InvoiceDetailScreen({ route }) {
               <Text style={[styles.amountValue, valueStyle]}>{value}</Text>
             </View>
           ))}
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between' }}>
+  
+           <TouchableOpacity onPress={() => handleDownloadPDF(inv.id)}>
+           <Text style={{ color: COLORS.primary }}>PDF</Text>
+           </TouchableOpacity>
+
+           <TouchableOpacity onPress={() => handleShare(inv)}>
+           <Text style={{ color: COLORS.info }}>Share</Text>
+          </TouchableOpacity>
+
         </View>
 
         {/* Items */}

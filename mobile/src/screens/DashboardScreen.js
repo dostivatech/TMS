@@ -18,10 +18,11 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false)
   const { user } = useAuth()
   const navigation = useNavigation()
-
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
   const load = async () => {
     try {
-      const { data: d } = await dashboardAPI.get()
+      const { data: d } = await dashboardAPI.analytics({ from, to })
       setData(d)
     } catch (e) {
       console.log('Dashboard error:', e.message)
@@ -30,14 +31,20 @@ export default function DashboardScreen() {
       setRefreshing(false)
     }
   }
-
+  
   useEffect(() => { load() }, [])
 
   if (loading) return <LoadingScreen />
-
-  const chartData = data?.monthly_sales || []
+  useEffect(() => {
+  load()
+   }, [from, to])
+  const chartData = Object.entries(data?.daily || {}).map(([date, v]) => ({
+  label: date.slice(5),
+  sales: v.sales,
+  purchases: v.purchases,
+  }))
   const barData = {
-    labels: chartData.map(m => m.month.split(' ')[0]),
+    labels: chartData.map(m => m.label),
     datasets: [
       { data: chartData.map(m => m.sales || 0), color: () => COLORS.primaryLight },
       { data: chartData.map(m => m.purchases || 0), color: () => COLORS.info },
@@ -60,7 +67,27 @@ export default function DashboardScreen() {
           <Text style={styles.avatarText}>{(user?.username || 'U')[0].toUpperCase()}</Text>
         </View>
       </View>
+      <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+  
+      <TouchableOpacity onPress={() => {
+        const d = new Date()
+        d.setDate(d.getDate() - 7)
+        setFrom(d.toISOString().split('T')[0])
+        setTo(new Date().toISOString().split('T')[0])
+        }}>
+       <Text style={{ marginRight: 10, color: COLORS.primary }}>7D</Text>
+      </TouchableOpacity>
 
+      <TouchableOpacity onPress={() => {
+       const d = new Date()
+       d.setDate(d.getDate() - 30)
+       setFrom(d.toISOString().split('T')[0])
+       setTo(new Date().toISOString().split('T')[0])
+      }}>
+      <Text style={{ color: COLORS.primary }}>30D</Text>
+      </TouchableOpacity>
+
+      </View>
       <View style={styles.content}>
         {/* Stat Cards */}
         <View style={styles.statsRow}>
