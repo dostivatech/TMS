@@ -101,7 +101,7 @@ router.get('/analytics', auth, async (req, res) => {
   try {
     let { from, to } = req.query
 
-    // 🔥 Default dates if empty
+    //  Default dates if empty
     if (!from || !to) {
       const today = new Date()
       const past = new Date()
@@ -151,7 +151,7 @@ router.get('/analytics', auth, async (req, res) => {
       summary.pending += inv.balanceDue
     })
 
-    // 🔥 SaaS metrics
+    //  SaaS metrics
     summary.profit = summary.sales - summary.purchases
     summary.cashflow = summary.received - summary.paid
 
