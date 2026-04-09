@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { customerAPI } from '../api/api'
 
 const CustomerDetails = () => {
   const { id } = useParams();
@@ -8,13 +8,13 @@ const CustomerDetails = () => {
   const [customer, setCustomer] = useState(null);
   const [transactions, setTransactions] = useState([]);
 
-  useEffect(() => {
-    axios.get(`/api/customers/${id}`)
-      .then(res => {
-        setCustomer(res.data.customer);
-        setTransactions(res.data.transactions);
-      });
-  }, [id]);
+ useEffect(() => {
+  customerAPI.get(id)
+    .then(res => {
+      setCustomer(res.data)
+      setTransactions(res.data.transactions || [])
+    })
+}, [id])
 
   if (!customer) return <p>Loading...</p>;
 
