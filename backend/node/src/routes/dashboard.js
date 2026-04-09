@@ -57,7 +57,7 @@ router.get('/', auth, async (req, res) => {
       .sort((a, b) => b.total - a.total)
       .slice(0, 5)
 
-    // Recent transactions
+    // Recent transactions 
     const recentTxns = await Transaction.findAll({
       where: scope,
       order: [['createdAt', 'DESC']],
