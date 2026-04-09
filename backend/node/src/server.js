@@ -1,5 +1,5 @@
 require('dotenv').config()
-require('./services/reminderService')()
+require('./services/reminderService')
 
 const dashboardRoutes = require('./routes/dashboardRoutes')
 const express = require('express')
